@@ -7,6 +7,7 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -24,12 +25,14 @@ public class HeartEvents {
   private static void forceHearts(PlayerEntity player) {
     ModifiableAttributeInstance healthAttribute = player.getAttribute(Attributes.MAX_HEALTH);
     AttributeModifier oldHealthModifier = healthAttribute.getModifier(ID);
-    if (oldHealthModifier == null) {
-      //always apply to player if they do not have
-      int h = 2 * ConfigManager.INIT_HEARTS.get();
-      AttributeModifier healthModifier = new AttributeModifier(ID, ModMain.MODID, h, AttributeModifier.Operation.ADDITION);
-      healthAttribute.applyPersistentModifier(healthModifier);
+    if (oldHealthModifier != null) {
+      //delete and replace
+      healthAttribute.removeModifier(oldHealthModifier);
     }
+    //always apply to player if they do not have
+    int h = 2 * ConfigManager.INIT_HEARTS.get();
+    AttributeModifier healthModifier = new AttributeModifier(ID, ModMain.MODID, h, AttributeModifier.Operation.ADDITION);
+    healthAttribute.applyPersistentModifier(healthModifier);
   }
 
   @SubscribeEvent
@@ -50,20 +53,26 @@ public class HeartEvents {
       PlayerEntity player = (PlayerEntity) event.getEntityLiving();
       ItemEntity itemEntity = event.getItem();
       ItemStack resultStack = itemEntity.getItem();
-      if (!resultStack.isEmpty() &&
-          resultStack.getItem() == ModRegistry.HALF_HEART) {
-        // multi stack
+      if (!resultStack.isEmpty() && resultStack.getItem() instanceof ItemHealing) {
+        ItemHealing heart = (ItemHealing) resultStack.getItem();
+        //try to heal one by one
+        boolean healed = false;
         while (!resultStack.isEmpty() && player.shouldHeal()) {
-          player.heal(1F);
+          player.heal(heart.getHealing());
           resultStack.shrink(1);
           itemEntity.setItem(resultStack);
+          healed = true;
+        }
+        if (healed && ConfigManager.DO_SOUND_PICKUP.get()) {
+          ModRegistry.playSoundFromServer((ServerPlayerEntity) player, ModRegistry.heart_get, 0.3F, 0.95F);
         }
         //all done. so EITHER player is fully healed
         // OR we ran out of items... so do we cancel?
+        //dont cancel if healed = true, there might be more remaining
         if (itemEntity.getItem().isEmpty()) {
           itemEntity.remove();
-          event.setCanceled(true);//cancel to block the pickup
-          //        event.setResult(Result.DENY);
+          //cancel to block the pickup 
+          event.setCanceled(true);
         }
       }
     }

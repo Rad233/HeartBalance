@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "heartbalance:half_heart"
+    },
+    {
+      "item": "heartbalance:half_heart"
+    }
+  ],
+  "result": {
+    "item": "heartbalance:full_heart"
+  }
+}

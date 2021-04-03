@@ -1,1 +1,4 @@
-{ }
+{
+	"item.heartbalance.half_heart":"Half-Heart",
+	"item.heartbalance.full_heart":"Heart"	
+}
