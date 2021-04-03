@@ -1,0 +1,10 @@
+
+#General settings
+[heartbalance]
+	#Chance for a kill to drop a half heart refill.
+	#Range: 0.0 ~ 1.0
+	HeartChances = 0.1
+	#Set the initial heart offset, it adds this to all players.  Zero means normal 10 hearts, -1 means players start with 9 hearts.
+	#Range: -10 ~ 20
+	HeartOffset = -7
+
