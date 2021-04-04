@@ -1,6 +1,7 @@
 package com.lothrazar.heartbalance;
 
 import java.util.UUID;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -64,7 +65,7 @@ public class HeartEvents {
           healed = true;
         }
         if (healed && ConfigManager.DO_SOUND_PICKUP.get()) {
-          ModRegistry.playSoundFromServer((ServerPlayerEntity) player, ModRegistry.heart_get, 0.3F, 0.95F);
+          ModRegistry.playSoundFromServer((ServerPlayerEntity) player, ModRegistry.HEART_GET, 0.3F, 0.95F);
         }
         //all done. so EITHER player is fully healed
         // OR we ran out of items... so do we cancel?
@@ -87,12 +88,10 @@ public class HeartEvents {
     }
     //if config is at 10, and you roll in 10-100 you were cancelled,
     //else here we continue so our roll was < 10 so the percentage worked
-    if (event.getSource().getTrueSource() instanceof PlayerEntity &&
-        !(event.getSource().getTrueSource() instanceof FakePlayer)) {
-      //killed by me
-      //      PlayerEntity realPlayer = (PlayerEntity) event.getSource().getTrueSource();
-      EntityClassification eclass = event.getEntityLiving().getType().getClassification();
-      if (eclass == EntityClassification.MONSTER) {
+    Entity trueSource = event.getSource().getTrueSource();
+    if (trueSource instanceof PlayerEntity && !(trueSource instanceof FakePlayer)) {
+      //killed by me  
+      if (event.getEntityLiving().getType().getClassification() == EntityClassification.MONSTER) {
         //drop
         BlockPos pos = event.getEntity().getPosition();
         world.addEntity(new ItemEntity(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,

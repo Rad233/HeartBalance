@@ -29,10 +29,10 @@ public class ModRegistry {
   @SubscribeEvent
   public void registerSounds(RegistryEvent.Register<SoundEvent> event) {
     IForgeRegistry<SoundEvent> r = event.getRegistry();
-    r.register(heart_get);
+    r.register(HEART_GET);
   }
 
-  public static SoundEvent heart_get = make("heart_get");
+  public static SoundEvent HEART_GET = make("heart_get");
 
   private static SoundEvent make(String s) {
     SoundEvent se = new SoundEvent(new ResourceLocation(ModMain.MODID, s));

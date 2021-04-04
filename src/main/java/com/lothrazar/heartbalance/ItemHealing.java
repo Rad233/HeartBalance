@@ -28,7 +28,7 @@ public class ItemHealing extends Item {
       itemstack.shrink(1);
       player.swingArm(handIn);
       if (world.isRemote && ConfigManager.DO_SOUND_USE.get()) {
-        player.playSound(ModRegistry.heart_get, 0.2F, 0.95F);
+        player.playSound(ModRegistry.HEART_GET, 0.2F, 0.95F);
       }
       return ActionResult.resultSuccess(itemstack);
     }

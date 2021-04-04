@@ -24,8 +24,10 @@ public class ConfigManager {
     CFG.comment("General settings").push(ModMain.MODID);
     DO_SOUND_USE = CFG.comment("Play sounds on heart pickup").define("playSoundUse", true);
     DO_SOUND_PICKUP = CFG.comment("Play sounds on heart pickup").define("playSoundPickup", true);
-    INIT_HEARTS = CFG.comment("Set the initial heart offset, it adds this to all players.  Zero means normal 10 hearts, -1 means players start with 9 hearts.").defineInRange("HeartOffset", -7, -10, 20);
-    CHANCE = CFG.comment("Chance for a kill to drop a half heart refill.").defineInRange("HeartChances", 0.1, 0, 1);
+    INIT_HEARTS = CFG.comment("Set the initial heart offset, it adds this to all players.  Zero means normal 10 hearts, -1 means players start with 9 hearts.")
+        .defineInRange("HeartOffset", -7, -10, 20);
+    CHANCE = CFG.comment("Chance for a kill to drop a half heart refill.")
+        .defineInRange("HeartChances", 0.1, 0, 1);
     CFG.pop(); // one pop for every push
     COMMON_CONFIG = CFG.build();
   }
