@@ -61,7 +61,10 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-
+            
+						// probably for patchouli
+            property 'mixin.env.disableRefMap', 'true'
+            
             mods {
                 heartbalance {
                     source sourceSets.main
@@ -85,23 +88,6 @@ minecraft {
             }
         }
 
-        data {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            args '--mod', 'heartbalance', '--all', '--output', file('src/generated/resources/')
-
-            mods {
-                heartbalance {
-                    source sourceSets.main
-                }
-            }
-        }
     }
 }
 
@@ -118,9 +104,10 @@ dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
  
     compile fg.deobf("mezz.jei:${jei_version}")
- //   compile fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
- //   compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
- //   runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    compile fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+
+    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
 
   //  implementation fg.deobf("curse.maven:simple-storage-network-268495:3257204")
