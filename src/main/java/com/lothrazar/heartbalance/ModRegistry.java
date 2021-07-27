@@ -1,12 +1,12 @@
 package com.lothrazar.heartbalance;
 
 import com.lothrazar.heartbalance.item.ItemHeart;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.network.play.server.SPlaySoundEffectPacket;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -40,11 +40,11 @@ public class ModRegistry {
     return se;
   }
 
-  public static void playSoundFromServer(ServerPlayerEntity entityIn, SoundEvent soundIn, float p, float v) {
+  public static void playSoundFromServer(ServerPlayer entityIn, SoundEvent soundIn, float p, float v) {
     if (soundIn == null || entityIn == null) {
       return;
     }
-    entityIn.connection.sendPacket(new SPlaySoundEffectPacket(soundIn, SoundCategory.BLOCKS,
-        entityIn.lastTickPosX, entityIn.lastTickPosY, entityIn.lastTickPosZ, p, v));
+    entityIn.connection.send(new ClientboundSoundPacket(soundIn, SoundSource.BLOCKS,
+        entityIn.xOld, entityIn.yOld, entityIn.zOld, p, v));
   }
 }

@@ -3,17 +3,17 @@ package com.lothrazar.heartbalance.item;
 import com.lothrazar.heartbalance.ConfigManager;
 import com.lothrazar.heartbalance.ModRegistry;
 import java.util.List;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -22,7 +22,7 @@ public class ItemHeart extends Item {
   final int healAmt;
 
   public ItemHeart(Properties properties, int value) {
-    super(properties.group(ItemGroup.COMBAT));
+    super(properties.tab(CreativeModeTab.TAB_COMBAT));
     healAmt = value;
   }
 
@@ -32,25 +32,25 @@ public class ItemHeart extends Item {
 
   @Override
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    TranslationTextComponent t = new TranslationTextComponent(getTranslationKey() + ".tooltip");
-    t.mergeStyle(TextFormatting.GRAY);
+  public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+    TranslatableComponent t = new TranslatableComponent(getDescriptionId() + ".tooltip");
+    t.withStyle(ChatFormatting.GRAY);
     tooltip.add(t);
   }
 
   @Override
-  public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand handIn) {
-    ItemStack itemstack = player.getHeldItem(handIn);
-    if (player.shouldHeal() && !player.getCooldownTracker().hasCooldown(itemstack.getItem())) {
+  public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand handIn) {
+    ItemStack itemstack = player.getItemInHand(handIn);
+    if (player.isHurt() && !player.getCooldowns().isOnCooldown(itemstack.getItem())) {
       player.heal(getHealing());
-      player.getCooldownTracker().setCooldown(itemstack.getItem(), 20);
+      player.getCooldowns().addCooldown(itemstack.getItem(), 20);
       itemstack.shrink(1);
-      player.swingArm(handIn);
-      if (world.isRemote && ConfigManager.DO_SOUND_USE.get()) {
+      player.swing(handIn);
+      if (world.isClientSide && ConfigManager.DO_SOUND_USE.get()) {
         player.playSound(ModRegistry.HEART_GET, 0.2F, 0.95F);
       }
-      return ActionResult.resultSuccess(itemstack);
+      return InteractionResultHolder.success(itemstack);
     }
-    return ActionResult.resultPass(player.getHeldItem(handIn));
+    return InteractionResultHolder.pass(player.getItemInHand(handIn));
   }
 }
