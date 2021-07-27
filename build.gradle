@@ -1,13 +1,12 @@
 buildscript {
     repositories {
+	     maven { url = 'https://maven.minecraftforge.net' } 
         maven { url = 'https://files.minecraftforge.net/maven' }
-    //    maven { url = 'https://dist.creeper.host/Sponge/maven' }
         jcenter()
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-    //    classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -15,7 +14,6 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'checkstyle'
-// apply plugin: 'org.spongepowered.mixin'
 
 import net.minecraftforge.gradle.common.task.SignJar
 import groovy.json.JsonSlurper
@@ -91,24 +89,15 @@ minecraft {
     }
 }
 
-// mixin {
-//       add sourceSets.main, "lothrazarheartbalance.refmap.json"
-//
-//       disableTargetValidator = false
-// }
-
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
  
-    compile fg.deobf("mezz.jei:${jei_version}")
-    compile fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
-
+    //implementation fg.deobf("mezz.jei:${jei_version}")
+    //implementationfg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+ 
 
   //  implementation fg.deobf("curse.maven:simple-storage-network-268495:3257204")
   //  implementation fg.deobf("curse.maven:cyclic-239286:3249448")

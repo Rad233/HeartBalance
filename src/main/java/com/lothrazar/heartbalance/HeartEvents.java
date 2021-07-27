@@ -10,7 +10,6 @@ import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -20,9 +19,6 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import top.theillusivec4.curios.api.CuriosApi;
 
 public class HeartEvents {
 
@@ -40,70 +36,6 @@ public class HeartEvents {
     AttributeModifier healthModifier = new AttributeModifier(ID, ModMain.MODID, h, AttributeModifier.Operation.ADDITION);
     healthAttribute.applyPersistentModifier(healthModifier);
   }
-
-  public static ItemStack getValidCurio(PlayerEntity player, Item remote) {
-    if (isValid(player.getHeldItemOffhand(), remote)) {
-      return player.getHeldItemOffhand();
-    }
-    if (isValid(player.getHeldItemMainhand(), remote)) {
-      return player.getHeldItemMainhand();
-    }
-    if (ModList.get().isLoaded("curios")) {
-      //check curios slots
-      final ImmutableTriple<String, Integer, ItemStack> equipped = CuriosApi.getCuriosHelper().findEquippedCurio(remote, player).orElse(null);
-      if (equipped != null && isValid(equipped.right, remote)) {
-        //success: try to insert items to network thru this remote 
-        return equipped.right;
-      }
-    }
-    //    for (int i = 0; i < player.getInventoryEnderChest().getSizeInventory(); i++) {
-    //      ItemStack temp = player.getInventoryEnderChest().getStackInSlot(i);
-    //      if (isValid(temp, remote)) {
-    //        return temp;
-    //      }
-    //    }
-    for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-      ItemStack temp = player.inventory.getStackInSlot(i);
-      if (isValid(temp, remote)) {
-        return temp;
-      }
-    }
-    return ItemStack.EMPTY;
-  }
-
-  public static boolean isValid(ItemStack right, Item remote) {
-    return right.getItem() == remote
-        //if its not isDamageable, we dont care, otherwise it is, so return true if we still have some juice left, havent taken max
-        && (!remote.isDamageable() || right.getDamage() < right.getMaxDamage());
-  }
-  //  @SubscribeEvent
-  //  public void onFallDamageEvent(LivingDamageEvent event) {
-  //    if (event.getEntityLiving() instanceof PlayerEntity == false) {
-  //      return;
-  //    }
-  //    PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-  //    if (event.getSource() == DamageSource.FALL) {
-  //      ItemStack match = getValidCurio(player, ModRegistry.RING_FALL);
-  //      if (!match.isEmpty()) {
-  //        event.setAmount(0);
-  //      }
-  //    }
-  //  }
-  //
-  //  @SubscribeEvent
-  //  public void onLivingKnockBackEvent(LivingKnockBackEvent event) {
-  //    if (event.getEntityLiving() instanceof PlayerEntity == false) {
-  //      return;
-  //    }
-  //    PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-  //    ItemStack match = getValidCurio(player, ModRegistry.RING_KNOCKBACK);
-  //    if (!match.isEmpty()) {
-  //      match.damageItem(1, player, p -> {});
-  //      // 
-  //      event.setStrength(0);
-  //      ModMain.LOGGER.info("knockback on  str");
-  //    }
-  //  }
 
   @SubscribeEvent
   public void onEntityJoinWorld(EntityJoinWorldEvent event) {
