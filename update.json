@@ -1,10 +1,11 @@
 {
   "homepage": "https://www.curseforge.com/minecraft/mc-mods/heart-balance",
   "promos": {
-    "1.16.5-latest": "1.0.0",
-    "1.16.5-recommended": "1.0.0"
+    "1.16.5-latest": "1.0.1",
+    "1.16.5-recommended": "1.0.1"
   },
   "1.16.5": {
-    "1.0.0": "First Release "
+    "1.0.0": "First Release ",
+    "1.0.1":"New config: allowPickup If true, then a player with full health walking into a heart will get it as an item (false will vanish on pickup even if 0 healing done)"
   }
 }

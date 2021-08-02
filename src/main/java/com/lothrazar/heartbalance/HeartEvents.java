@@ -71,7 +71,10 @@ public class HeartEvents {
         //all done. so EITHER player is fully healed
         // OR we ran out of items... so do we cancel?
         //dont cancel if healed = true, there might be more remaining
-        if (itemEntity.getItem().isEmpty()) {
+        if (ConfigManager.DO_PICKUP.get() == false ||
+            itemEntity.getItem().isEmpty()) {
+          //if config says no item pickup. always cancel and remove all items (even if not empty)
+          //if config allows us through, then remove if empty i guess
           itemEntity.remove();
           //cancel to block the pickup 
           event.setCanceled(true);
