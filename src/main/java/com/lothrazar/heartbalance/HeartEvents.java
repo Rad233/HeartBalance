@@ -72,7 +72,7 @@ public class HeartEvents {
         // OR we ran out of items... so do we cancel?
         //dont cancel if healed = true, there might be more remaining
         if (itemEntity.getItem().isEmpty()) {
-          itemEntity.remove(false);
+          itemEntity.remove(Entity.RemovalReason.DISCARDED);
           //cancel to block the pickup
           event.setCanceled(true);
         }
