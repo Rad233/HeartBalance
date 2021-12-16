@@ -22,7 +22,7 @@ public class ItemHeart extends Item {
   final int healAmt;
 
   public ItemHeart(Properties properties, int value) {
-    super(properties.group(ItemGroup.COMBAT));
+    super(properties.tab(ItemGroup.TAB_COMBAT));
     healAmt = value;
   }
 
@@ -32,25 +32,25 @@ public class ItemHeart extends Item {
 
   @Override
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    TranslationTextComponent t = new TranslationTextComponent(getTranslationKey() + ".tooltip");
-    t.mergeStyle(TextFormatting.GRAY);
+  public void appendHoverText(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    TranslationTextComponent t = new TranslationTextComponent(getDescriptionId() + ".tooltip");
+    t.withStyle(TextFormatting.GRAY);
     tooltip.add(t);
   }
 
   @Override
-  public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand handIn) {
-    ItemStack itemstack = player.getHeldItem(handIn);
-    if (player.shouldHeal() && !player.getCooldownTracker().hasCooldown(itemstack.getItem())) {
+  public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand handIn) {
+    ItemStack itemstack = player.getItemInHand(handIn);
+    if (player.isHurt() && !player.getCooldowns().isOnCooldown(itemstack.getItem())) {
       player.heal(getHealing());
-      player.getCooldownTracker().setCooldown(itemstack.getItem(), 20);
+      player.getCooldowns().addCooldown(itemstack.getItem(), 20);
       itemstack.shrink(1);
-      player.swingArm(handIn);
-      if (world.isRemote && ConfigManager.DO_SOUND_USE.get()) {
+      player.swing(handIn);
+      if (world.isClientSide && ConfigManager.DO_SOUND_USE.get()) {
         player.playSound(ModRegistry.HEART_GET, 0.2F, 0.95F);
       }
-      return ActionResult.resultSuccess(itemstack);
+      return ActionResult.success(itemstack);
     }
-    return ActionResult.resultPass(player.getHeldItem(handIn));
+    return ActionResult.pass(player.getItemInHand(handIn));
   }
 }
