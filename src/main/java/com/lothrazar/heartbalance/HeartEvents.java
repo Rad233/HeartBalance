@@ -1,17 +1,17 @@
 package com.lothrazar.heartbalance;
 
-import com.lothrazar.heartbalance.item.ItemHeart;
 import java.util.UUID;
+import com.lothrazar.heartbalance.item.ItemHeart;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -96,7 +96,7 @@ public class HeartEvents {
         //drop
         BlockPos pos = event.getEntity().blockPosition();
         world.addFreshEntity(new ItemEntity(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
-            new ItemStack(ModRegistry.HALF_HEART)));
+            new ItemStack(ModRegistry.HALF_HEART.get())));
       }
     }
   }
