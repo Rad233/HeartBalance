@@ -1,8 +1,7 @@
 buildscript {
     repositories {
-	     maven { url = 'https://maven.minecraftforge.net' } 
+        maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
         mavenCentral()
     }
     dependencies {
@@ -14,7 +13,6 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'checkstyle'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 import net.minecraftforge.gradle.common.tasks.SignJar
 import groovy.json.JsonSlurper
@@ -35,10 +33,9 @@ checkstyleMain {
 }
 
 minecraft {
-    
-	 mappings channel: 'official', version: '1.17.1'
-	 
-	 
+
+    mappings channel: "official", version: "${mc_version}"
+ 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
