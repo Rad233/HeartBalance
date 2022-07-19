@@ -2,16 +2,16 @@ package com.lothrazar.heartbalance;
 
 import com.lothrazar.heartbalance.item.ItemHeart;
 import java.util.UUID;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -26,6 +26,9 @@ public class HeartEvents {
 
   private static void forceHearts(Player player) {
     AttributeInstance healthAttribute = player.getAttribute(Attributes.MAX_HEALTH);
+    if (healthAttribute == null) {
+      return;
+    }
     AttributeModifier oldHealthModifier = healthAttribute.getModifier(ID);
     if (oldHealthModifier != null) {
       //delete and replace
@@ -55,8 +58,7 @@ public class HeartEvents {
       Player player = (Player) event.getEntityLiving();
       ItemEntity itemEntity = event.getItem();
       ItemStack resultStack = itemEntity.getItem();
-      if (!resultStack.isEmpty() && resultStack.getItem() instanceof ItemHeart) {
-        ItemHeart heart = (ItemHeart) resultStack.getItem();
+      if (!resultStack.isEmpty() && resultStack.getItem() instanceof ItemHeart heart) {
         //try to heal one by one
         boolean healed = false;
         while (!resultStack.isEmpty() && player.isHurt()) {
@@ -71,9 +73,12 @@ public class HeartEvents {
         //all done. so EITHER player is fully healed
         // OR we ran out of items... so do we cancel?
         //dont cancel if healed = true, there might be more remaining
-        if (itemEntity.getItem().isEmpty()) {
+        if (!ConfigManager.DO_PICKUP.get() ||
+            itemEntity.getItem().isEmpty()) {
+          //if config says no item pickup. always cancel and remove all items (even if not empty)
+          //if config allows us through, then remove if empty i guess
           itemEntity.remove(Entity.RemovalReason.DISCARDED);
-          //cancel to block the pickup
+          //cancel to block the pickup 
           event.setCanceled(true);
         }
       }
