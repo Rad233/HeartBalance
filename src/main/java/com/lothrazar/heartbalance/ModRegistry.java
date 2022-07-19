@@ -3,10 +3,11 @@ package com.lothrazar.heartbalance;
 import com.lothrazar.heartbalance.item.ItemHeart;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.network.play.server.SPlaySoundEffectPacket;
+import net.minecraft.network.play.server.SPlaySoundPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -44,7 +45,7 @@ public class ModRegistry {
     if (soundIn == null || entityIn == null) {
       return;
     }
-    entityIn.connection.sendPacket(new SPlaySoundEffectPacket(soundIn, SoundCategory.BLOCKS,
-        entityIn.lastTickPosX, entityIn.lastTickPosY, entityIn.lastTickPosZ, p, v));
+    entityIn.connection.send(new SPlaySoundPacket(soundIn.getLocation(), SoundCategory.BLOCKS,
+            new Vector3d(entityIn.xOld, entityIn.yOld, entityIn.zOld), p, v));
   }
 }

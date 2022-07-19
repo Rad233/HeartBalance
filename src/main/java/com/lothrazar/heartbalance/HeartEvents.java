@@ -26,6 +26,9 @@ public class HeartEvents {
 
   private static void forceHearts(PlayerEntity player) {
     ModifiableAttributeInstance healthAttribute = player.getAttribute(Attributes.MAX_HEALTH);
+    if (healthAttribute == null) {
+      return;
+    }
     AttributeModifier oldHealthModifier = healthAttribute.getModifier(ID);
     if (oldHealthModifier != null) {
       //delete and replace
@@ -34,7 +37,7 @@ public class HeartEvents {
     //always apply to player if they do not have
     int h = 2 * ConfigManager.INIT_HEARTS.get();
     AttributeModifier healthModifier = new AttributeModifier(ID, ModMain.MODID, h, AttributeModifier.Operation.ADDITION);
-    healthAttribute.applyPersistentModifier(healthModifier);
+    healthAttribute.addPermanentModifier(healthModifier);
   }
 
   @SubscribeEvent
@@ -59,7 +62,7 @@ public class HeartEvents {
         ItemHeart heart = (ItemHeart) resultStack.getItem();
         //try to heal one by one
         boolean healed = false;
-        while (!resultStack.isEmpty() && player.shouldHeal()) {
+        while (!resultStack.isEmpty() && player.isHurt()) {
           player.heal(heart.getHealing());
           resultStack.shrink(1);
           itemEntity.setItem(resultStack);
@@ -71,11 +74,11 @@ public class HeartEvents {
         //all done. so EITHER player is fully healed
         // OR we ran out of items... so do we cancel?
         //dont cancel if healed = true, there might be more remaining
-        if (ConfigManager.DO_PICKUP.get() == false ||
+        if (!ConfigManager.DO_PICKUP.get() ||
             itemEntity.getItem().isEmpty()) {
           //if config says no item pickup. always cancel and remove all items (even if not empty)
           //if config allows us through, then remove if empty i guess
-          itemEntity.remove();
+          itemEntity.remove(false);
           //cancel to block the pickup 
           event.setCanceled(true);
         }
@@ -85,20 +88,20 @@ public class HeartEvents {
 
   @SubscribeEvent
   public void onLivingDeathEvent(LivingDeathEvent event) {
-    World world = event.getEntity().world;
-    if (world.isRemote || event.getSource() == null
-        || world.rand.nextDouble() >= ConfigManager.CHANCE.get()) {
+    World world = event.getEntity().level;
+    if (world.isClientSide || event.getSource() == null
+        || world.random.nextDouble() >= ConfigManager.CHANCE.get()) {
       return;
     }
     //if config is at 10, and you roll in 10-100 you were cancelled,
     //else here we continue so our roll was < 10 so the percentage worked
-    Entity trueSource = event.getSource().getTrueSource();
+    Entity trueSource = event.getSource().getEntity();
     if (trueSource instanceof PlayerEntity && !(trueSource instanceof FakePlayer)) {
       //killed by me  
-      if (event.getEntityLiving().getType().getClassification() == EntityClassification.MONSTER) {
+      if (event.getEntityLiving().getType().getCategory() == EntityClassification.MONSTER) {
         //drop
-        BlockPos pos = event.getEntity().getPosition();
-        world.addEntity(new ItemEntity(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+        BlockPos pos = event.getEntity().blockPosition();
+        world.addFreshEntity(new ItemEntity(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
             new ItemStack(ModRegistry.HALF_HEART)));
       }
     }
