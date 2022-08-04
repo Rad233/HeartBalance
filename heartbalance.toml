@@ -6,7 +6,10 @@
 	#Range: 0.0 ~ 1.0
 	lootHeartChances = 0.1
 	#
-	#Set the initial heart offset, it adds this to all players.  Zero means normal 10 hearts; -1 means players start with 9 hearts; 5 means you spawn with 15 hearts.
+	#If true, then a player with full health walking into a heart will get it as an item (false will vanish)
+	allowPickup = true
+	#
+	#Edit players maximum hearts, for all players as an offset: Zero means normal 10 hearts no changes; -7 means players start with 3 hearts; 5 means you spawn with 15 hearts
 	#Range: -9 ~ 90
 	spawnHeartOffset = 0
 	#

@@ -12,8 +12,3 @@
 [![links](https://img.shields.io/badge/more-links-ff69b4.svg)](https://allmylinks.com/lothrazar)
 [![Support](https://img.shields.io/badge/Patreon-Support-orange.svg?logo=Patreon)](https://www.patreon.com/Lothrazar)
 
-
-
-# Servers
-
-Looking to host a Modded server? Get a huge discount with my promo code https://nodecraft.com/r/loth

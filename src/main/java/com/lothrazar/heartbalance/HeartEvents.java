@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -26,6 +26,9 @@ public class HeartEvents {
 
   private static void forceHearts(Player player) {
     AttributeInstance healthAttribute = player.getAttribute(Attributes.MAX_HEALTH);
+    if (healthAttribute == null) {
+      return;
+    }
     AttributeModifier oldHealthModifier = healthAttribute.getModifier(ID);
     if (oldHealthModifier != null) {
       //delete and replace
@@ -38,7 +41,7 @@ public class HeartEvents {
   }
 
   @SubscribeEvent
-  public void onEntityJoinWorld(EntityJoinWorldEvent event) {
+  public void onEntityJoinWorld(EntityJoinLevelEvent event) {
     if (event.getEntity() instanceof Player) {
       forceHearts((Player) event.getEntity());
     }
@@ -46,13 +49,13 @@ public class HeartEvents {
 
   @SubscribeEvent
   public void onPlayerCloneDeath(PlayerEvent.Clone event) {
-    forceHearts(event.getPlayer());
+    forceHearts(event.getEntity());
   }
 
   @SubscribeEvent
   public void onPlayerPickup(EntityItemPickupEvent event) {
-    if (event.getEntityLiving() instanceof Player) {
-      Player player = (Player) event.getEntityLiving();
+    if (event.getEntity() instanceof Player) {
+      Player player = event.getEntity();
       ItemEntity itemEntity = event.getItem();
       ItemStack resultStack = itemEntity.getItem();
       if (!resultStack.isEmpty() && resultStack.getItem() instanceof ItemHeart) {
@@ -71,7 +74,8 @@ public class HeartEvents {
         //all done. so EITHER player is fully healed
         // OR we ran out of items... so do we cancel?
         //dont cancel if healed = true, there might be more remaining
-        if (itemEntity.getItem().isEmpty()) {
+        if (!ConfigManager.DO_PICKUP.get() ||
+            itemEntity.getItem().isEmpty()) {
           itemEntity.remove(Entity.RemovalReason.DISCARDED);
           //cancel to block the pickup
           event.setCanceled(true);
@@ -92,7 +96,7 @@ public class HeartEvents {
     Entity trueSource = event.getSource().getEntity();
     if (trueSource instanceof Player && !(trueSource instanceof FakePlayer)) {
       //killed by me  
-      if (event.getEntityLiving().getType().getCategory() == MobCategory.MONSTER) {
+      if (event.getEntity().getType().getCategory() == MobCategory.MONSTER) {
         //drop
         BlockPos pos = event.getEntity().blockPosition();
         world.addFreshEntity(new ItemEntity(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
