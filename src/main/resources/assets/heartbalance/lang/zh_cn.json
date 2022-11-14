@@ -1,0 +1,8 @@
+{
+	"item.heartbalance.refill_heart":"急救心",
+	"item.heartbalance.half_heart":"半心",
+	"item.heartbalance.full_heart":"全心",
+	"item.heartbalance.refill_heart.tooltip":"使用后立即回复20点生命值",
+	"item.heartbalance.half_heart.tooltip":"接触回复",
+	"item.heartbalance.full_heart.tooltip":"接触回复"
+}
